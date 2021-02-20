@@ -36,6 +36,6 @@ const resistanceSchema = new Schema({
 });
 
 
-const resistanceSchema = mongoose.model("resistanceSchema", resistanceSchema);
+const Resistance = mongoose.model("Resistance", ResistanceSchema);
 
-module.exports = resistanceSchema;
+module.exports = Resistance;
