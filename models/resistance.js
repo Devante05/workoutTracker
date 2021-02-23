@@ -3,32 +3,34 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const resistanceSchema = new Schema({
-    name: {
+  name: {
     type: String,
     trim: true,
     required: "Name of workout is Required"
   },
 
-    type: {
+  type: {
     type: String,
     trim: true,
     required: "Type of workout required"
   },
 
-    sets: {
+  sets: {
     type: Number,
     trim: true,
     required: "Number of sets required"
   },
 
-    reps: {
+  reps: {
     type: String,
     trim: true,
     required: "Password is Required",
-    validate: [({ length }) => length >= 6, "Password should be longer."]
+    validate: [({
+      length
+    }) => length >= 6, "Password should be longer."]
   },
 
-    duration: {
+  duration: {
     type: Number,
     trim: true,
   },
