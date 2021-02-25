@@ -14,38 +14,46 @@ router.get("/", function (req, res) {
 })
 
 router.put("/:id", function (req, res) {
-    db.Workout.updateOne({ 
-        _id: ObjectID(req.body._id)
-    },
-    {
-        $set: {
-            day: req.body.day,
-            exercises:[{
-                type: req.body.type,
-                name: req.body.name,
-                duration: req.body.duration,
-                weight: req.body.weight,
-                reps: req.body.reps,
-                sets: req.body.sets,
-                distance: req.body.distance,
-    }]
-}})
-    .then(function (dbResult) {
-        res.json(dbResult)    
-    });
-})
+    db.Workout.findByIdAndUpdate(
+        req.params.id, 
+        { 
+            $push: { 
+                exercises: req.body
+            }
+        },(err,data)=>{
+            if(err) return err;
+            else res.json(data);
+        })
+});
+
+
+
+
+
+
+    //     db.Workout.updateOne({ 
+//         _id: ObjectID(req.body._id)
+//     },
+//     {
+//         $set: {
+//             day: req.body.day,
+//             exercises:[{
+//                 type: req.body.type,
+//                 name: req.body.name,
+//                 duration: req.body.duration,
+//                 weight: req.body.weight,
+//                 reps: req.body.reps,
+//                 sets: req.body.sets,
+//                 distance: req.body.distance,
+//     }]
+// }})
+//     .then(function (dbResult) {
+//         res.json(dbResult)    
+//     });
+// })
 
 router.post("/", (req, res) =>{
-    db.Workout.create({
-
-        type: req.body.type,
-        name: req.body.name,
-        duration: req.body.duration,
-        weight: req.body.weight,
-        reps: req.body.reps,
-        sets: req.body.sets,
-        distance: req.body.distance,
-        })
+    db.Workout.create({})
     .then(function (dbResult) {  
         res.json(dbResult)    
     })
@@ -53,7 +61,24 @@ router.post("/", (req, res) =>{
 
 })
 
-router.get("/range")
+router.get("/range", (req, res)=> {
+    db.Workout.aggregate([{
+        $addFields: {
+            "totalDuration": {
+                $sum : "$exercises.duration"
+            }
+        }
+    }])
+    .sort({'day': -1})
+    .limit(7)
+    .exec((err,data) => {
+        if (err){
+            res.send(error)
+        }   else{
+            res.send(data)
+        }
+    })
+})
 
 module.exports = router
 
