@@ -3,8 +3,24 @@ const db = require("../../models")
 var ObjectID = require('mongodb').ObjectID;
 
 
+// router.get("/", function (req, res) {
+//     db.Workout.find({})
+//         .then(function (dbResult) {
+//             res.json(dbResult)
+//         })
+//         .catch(function (error) {
+//             res.status(500).send(error.message)
+//         })
+// })
+
 router.get("/", function (req, res) {
-    db.Workout.find({})
+    db.Workout.aggregate([{
+        $addFields: {
+            totalDuration: {
+                "$sum" : "$exercises.duration"
+            }
+        }
+    }])
         .then(function (dbResult) {
             res.json(dbResult)
         })
@@ -12,6 +28,7 @@ router.get("/", function (req, res) {
             res.status(500).send(error.message)
         })
 })
+
 
 router.put("/:id", function (req, res) {
     db.Workout.findByIdAndUpdate(
@@ -43,7 +60,7 @@ router.get("/range", (req, res)=> {
     db.Workout.aggregate([{
         $addFields: {
             totalDuration: {
-                $sum : "$exercises.duration"
+                "$sum" : "$exercises.duration"
             }
         }
     }])
@@ -53,7 +70,7 @@ router.get("/range", (req, res)=> {
         if (err){
             res.send(error)
         }   else{
-            res.send(data)
+            res.json(data)
         }
     })
 })
